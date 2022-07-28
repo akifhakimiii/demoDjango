@@ -19,7 +19,6 @@ router.register('customer',views.CustomerViewSet)
 items_router = routers.NestedDefaultRouter(router, 'items', lookup='item')
 items_router.register('reviews',views.ReviewViewSet,basename='items-review')
 
-
 urlpatterns = router.urls + items_router.urls
 
 # urlpatterns = [
