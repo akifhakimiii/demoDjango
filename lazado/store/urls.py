@@ -11,9 +11,10 @@ app_name = "store"
 router = routers.DefaultRouter()
 router.register('allitems',views.ItemViewSet)
 router.register('items',views.ItemFilterViewSet, basename='items')
-router.register('reviews',views.ReviewViewSet)
+# router.register('reviews',views.ReviewViewSet)
 router.register('order',views.OrderViewSet)
 router.register('customer',views.CustomerViewSet)
+router.register('customer/address',views.AdressViewSet)
 
 #router for items
 items_router = routers.NestedDefaultRouter(router, 'items', lookup='item')

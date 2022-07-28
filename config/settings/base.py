@@ -2,6 +2,7 @@
 Base settings to build other settings files upon.
 """
 from pathlib import Path
+from datetime import timedelta
 
 import environ
 
@@ -77,6 +78,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "djoser",
+    "rest_framework_docs",
 ]
 
 LOCAL_APPS = [
@@ -303,16 +305,12 @@ SOCIALACCOUNT_FORMS = {"signup": "lazado.users.forms.UserSocialSignupForm"}
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-}
-#simple jwt
-SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
@@ -331,7 +329,18 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 # Your stuff...
+#djoser
 DJOSER =  {
-    'user_create': 'lazado.store.serializers.UserCreateSerializer',
+    'SERIALIZERS' : 
+    {'user_create': 'lazado.serializers.UserCreateSerializer',
+     'user': 'lazado.serializers.UserSerializer'
+    
+    },
+    
 
+}
+#SIMPLE_JWT
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('JWT',)
 }

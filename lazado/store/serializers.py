@@ -39,18 +39,19 @@ class ReviewSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['item','customer','payment']
+        fields = ['id','item','customer','payment']
 
-        item = serializers.PrimaryKeyRelatedField(queryset= Items.objects.all())
-        customer = serializers.PrimaryKeyRelatedField(queryset= Customer.objects.all())
+        # item = serializers.PrimaryKeyRelatedField(queryset= Items.objects.all())
+        # customer = serializers.PrimaryKeyRelatedField(queryset= Customer.objects.all())
 
 #UserCreate serializer
-class UserCreateSerializer(BaseUserCreateSerializer):
-    class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id','username','password','email','first_name','last_name']
+# class UserCreateSerializer(BaseUserCreateSerializer):
+#     class Meta(BaseUserCreateSerializer.Meta):
+#         fields = ['id','username','password','email','first_name','last_name']
 
 #Address serializer
 class AddressSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Address
         fields =['id','postcode','city','state','address']
@@ -59,27 +60,67 @@ class AddressSerializer(serializers.ModelSerializer):
 
 #Customer serializer
 class CustomerSerializer(serializers.ModelSerializer):
+
+    user_id = serializers.IntegerField(read_only=True)
     class Meta:
+        
         model = Customer
-        fields = ['age','address']
+        fields = ['age','user_id']
 
-    address = AddressSerializer()
+   
+    
+   
 
-    def create(self, validated_data):
-        print(User,'sini')
-        addvalue = validated_data['address']
-        address = Address(
-            postcode= addvalue['postcode'],
-            city= addvalue['city'],
-            state= addvalue['state'],
-            address= addvalue['address']
-        )
-        address.save()
-        addid = Address.objects.latest('id')
-        customer = Customer(
-            age = validated_data['age'],
-            address = addid,
-            user = User.id
-        )
-        customer.save()
-        pass
+#Customer serializer
+# class CustomerSerializer(serializers.ModelSerializer):
+
+#     user_id = serializers.IntegerField(read_only=True)
+#     class Meta:
+        
+#         model = Customer
+#         fields = ['age','address','user_id']
+
+#     address = AddressSerializer()
+#     print(user_id,'useriddd')
+#     def create(self, validated_data):
+#         print(self.customer,'selfff')
+        
+#         addvalue = validated_data['address']
+#         address = Address(
+#             postcode= addvalue['postcode'],
+#             city= addvalue['city'],
+#             state= addvalue['state'],
+#             address= addvalue['address']
+#         )
+#         address.save()
+#         users = User.objects.get(pk=self.user_id)
+#         addid = Address.objects.latest('id')
+#         customer = Customer(
+#             age = validated_data['age'],
+#             address = addid,
+#             user = users
+#         )
+#         customer.save()
+#         return customer
+    
+#     def update(self, instance, validated_data):
+        
+#         addvalue = validated_data['address']
+#         address = Address(
+#             postcode= addvalue['postcode'],
+#             city= addvalue['city'],
+#             state= addvalue['state'],
+#             address= addvalue['address']
+#         )
+#         address.save()
+#         users = User.objects.get(pk=self.user_id)
+#         addid = Address.objects.latest('id')
+#         customer = Customer(
+#             age = validated_data['age'],
+#             address = addid,
+#             user = users
+#         )
+#         customer.save()
+#         return instance      
+        
+        

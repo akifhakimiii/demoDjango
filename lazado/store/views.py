@@ -1,16 +1,18 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+from yaml import serialize
 from lazado.store.models import Items
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Items, Review, Order, Customer
+from .models import Items, Review, Order, Customer, Address
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin,UpdateModelMixin
-from .serializers import CustomerSerializer, ItemSerializer, OrderSerializer, ReviewSerializer
+from .serializers import AddressSerializer, CustomerSerializer, ItemSerializer, OrderSerializer, ReviewSerializer
 from rest_framework.views import APIView
 
 # Create your views here.
@@ -133,10 +135,27 @@ class ItemFilterViewSet(ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 #order viewset
-class OrderViewSet(ModelViewSet):
+class OrderViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,GenericViewSet):
     
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    @action(detail=False, methods=['GET','PUT'])
+    def me(self, request):
+        print(request.user.id , '---')
+        print(request , '---')
+
+        customer = Customer.objects.get(user_id=request.user.id)
+        order = Order.objects.filter(customer = customer)
+
+        if request.method == 'GET':
+            serializer = OrderSerializer(order,many=True)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = OrderSerializer(order,data=request.data,many=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
@@ -150,6 +169,43 @@ class ReviewViewSet(ModelViewSet):
 class CustomerViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,GenericViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
+    @action(detail=False, methods=['GET','PUT'])
+    def me(self, request):
+        print(request.user , '---')
+        (customer, created) = Customer.objects.get_or_create(user_id = request.user.id)
+
+        if request.method == 'GET':
+            serializer = CustomerSerializer(customer)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = CustomerSerializer(customer,data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+#adress viewset
+class AdressViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,GenericViewSet):
+    queryset = Address.objects.all()
+    serializer_class = CustomerSerializer
+
+    @action(detail=False, methods=['GET','PUT'])
+    def me(self, request):
+        
+        (customer, created) = Address.objects.get_or_create(user_id = request.user.id)
+
+        if request.method == 'GET':
+            serializer = AddressSerializer(customer)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = AddressSerializer(customer,data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+
+
+
 
 
   
