@@ -25,7 +25,7 @@ django-cors-headers==3.13.0 # https://github.com/adamchainz/django-cors-headers
 drf-spectacular==0.23.1  # https://github.com/tfranzel/drf-spectacular
 drf-nested-routers==0.93.4
 #JWT
-djangorestframework-simplejwt==4.8.0
+djangorestframework-simplejwt==5.2.1
 #djoser
 djoser==2.1.0
 #drf docs
